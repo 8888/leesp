@@ -190,13 +190,31 @@ lval* lval_take(lval* v, int i) {
   return x;
 }
 
+lval* lval_join(lval* x, lval* y) {
+  while (y->count) {
+    x = lval_add(x, lval_pop(y, 0));
+  }
+
+  lval_del(y);
+  return x;
+}
+
+lval* lval_eval_sexpr(lval* v);
+
+lval* lval_eval(lval* v) {
+  /* evaluate S-Expressions */
+  if (v->type == LVAL_SEXPR) { return lval_eval_sexpr(v); }
+  /* all other lval types remain the same */
+  return v;
+}
+
+#define LASSERT(args, cond, err) \
+  if (!(cond)) { lval_del(args); return lval_err(err); }
+
 lval* builtin_op(lval* a, char* op) {
   /* ensure all arguments are numbers */
   for (int i =0; i < a->count; i++) {
-    if (a->cell[i]->type != LVAL_NUM) {
-      lval_del(a);
-      return lval_err("cannot operate on a non-number!");
-    }
+    LASSERT(a, a->cell[i]->type == LVAL_NUM, "cannot operate on a non-number!");
   }
 
   /* pop the first element */
@@ -230,13 +248,71 @@ lval* builtin_op(lval* a, char* op) {
   return x;
 }
 
-lval* lval_eval_sexpr(lval* v);
+lval* builtin_head(lval* a) {
+  /* takes a Q-Expression and returns a Q-Expression of only the first element */
+  LASSERT(a, a->count == 1, "Function 'head' passed too many arguments!");
+  LASSERT(a, a->cell[0]->type == LVAL_QEXPR, "Function 'head' passed an incorrect type!");
+  LASSERT(a, a->cell[0]->count != 0, "Function 'head' passed an empty expression of {}!");
 
-lval* lval_eval(lval* v) {
-  /* evaluate S-Expressions */
-  if (v->type == LVAL_SEXPR) { return lval_eval_sexpr(v); }
-  /* all other lval types remain the same */
+  lval* v = lval_take(a, 0);
+  while (v->count > 1) {
+    lval_del(lval_pop(v, 1));
+  }
   return v;
+}
+
+lval* builtin_tail(lval* a) {
+  /* takes a Q-Expression and returns a Q-Expression with the first element removed */
+  LASSERT(a, a->count == 1, "Function 'tail' passed too many arguments!");
+  LASSERT(a, a->cell[0]->type == LVAL_QEXPR, "Function 'tail' passed an incorrect type!");
+  LASSERT(a, a->cell[0]->count != 0, "Function 'tail' passed an empty expression of {}!");
+
+  lval* v = lval_take(a, 0);
+  lval_del(lval_pop(v, 0));
+  return v;
+}
+
+lval* builtin_list(lval* a) {
+  /* takes one or more arguments and returns a new Q-Expression containing the arguments */
+  a->type = LVAL_QEXPR;
+  return a;
+}
+
+lval* builtin_eval(lval* a) {
+  /* takes a Q-Expression and evaluates it as if it were a S-Expression */
+  LASSERT(a, a->count == 1, "Function 'eval' passed too many arguments!");
+  LASSERT(a, a->cell[0]->type == LVAL_QEXPR, "Function 'eval' passed an incorrect type!");
+
+  lval* x = lval_take(a, 0);
+  x->type = LVAL_SEXPR;
+  return lval_eval(x);
+}
+
+lval* builtin_join(lval* a) {
+  /* takes one or more Q-Expressions and returns a Q-Expression of them joined together */
+  for (int i = 0; i < a->count; i++) {
+    LASSERT(a, a->cell[i]->type == LVAL_QEXPR, "Function 'join' passed an incorrect type!");
+  }
+
+  lval* x = lval_pop(a, 0);
+
+  while (a->count) {
+    x = lval_join(x, lval_pop(a, 0));
+  }
+
+  lval_del(a);
+  return x;
+}
+
+lval* builtin(lval* a, char* func) {
+  if (strcmp("list", func) == 0) { return builtin_list(a); }
+  if (strcmp("head", func) == 0) { return builtin_head(a); }
+  if (strcmp("tail", func) == 0) { return builtin_tail(a); }
+  if (strcmp("join", func) == 0) { return builtin_join(a); }
+  if (strcmp("eval", func) == 0) { return builtin_eval(a); }
+  if (strstr("+-/*", func)) { return builtin_op(a, func); }
+  lval_del(a);
+  return lval_err("Unknown function");
 }
 
 lval* lval_eval_sexpr(lval* v) {
@@ -265,7 +341,7 @@ lval* lval_eval_sexpr(lval* v) {
   }
 
   /* call builtin with operator */
-  lval* result = builtin_op(v, f->sym);
+  lval* result = builtin(v, f->sym);
   lval_del(f);
   return result;
 }
@@ -283,7 +359,7 @@ int main(int argc, char** argv) {
   mpca_lang(MPCA_LANG_DEFAULT,
     " \
       number: /-?[0-9]+/ ; \
-      symbol: '+' | '-' | '*' | '/' ; \
+      symbol: \"list\" | \"head\" | \"tail\" | \"join\" | \"eval\" | '+' | '-' | '*' | '/' ; \
       sexpr: '(' <expr>* ')' ; \
       qexpr: '{' <expr>* '}' ; \
       expr: <number> | <symbol>  | <sexpr> | <qexpr> ; \
