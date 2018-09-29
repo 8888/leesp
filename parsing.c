@@ -454,17 +454,6 @@ void lenv_add_builtins(lenv* e) {
   lenv_add_builtin(e, "/", builtin_div);
 }
 
-lval* builtin(lenv* e, lval* a, char* func) {
-  if (strcmp("list", func) == 0) { return builtin_list(e, a); }
-  if (strcmp("head", func) == 0) { return builtin_head(e, a); }
-  if (strcmp("tail", func) == 0) { return builtin_tail(e, a); }
-  if (strcmp("join", func) == 0) { return builtin_join(e, a); }
-  if (strcmp("eval", func) == 0) { return builtin_eval(e, a); }
-  if (strstr("+-/*", func)) { return builtin_op(e, a, func); }
-  lval_del(a);
-  return lval_err("Unknown function");
-}
-
 lval* lval_eval_sexpr(lenv* e, lval* v) {
   /* evaluate children */
   for (int i = 0; i < v->count; i++) {
