@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "mpc.h"
+#include "mpc/mpc.h"
 
 // compile if compiling on windows
 #ifdef _WIN32
