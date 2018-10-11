@@ -1,3 +1,9 @@
+/*
+Main value object used throughout leesp
+Includes functions to create and use lval instances
+requires useage of an environment
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 

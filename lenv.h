@@ -1,10 +1,7 @@
-/* forward declarations */
-// TODO: are these needed?
-// It will work based off import order in main.c
-// but that seems fragile
-lval* lval_err(char* fmt, ...);
-void lval_del(lval* v);
-lval* lval_copy(lval* v);
+/*
+Create an environment to store relatiopnships between symbols and values
+This is a naive approach of two equal length lists
+*/
 
 struct lenv {
   int count;
