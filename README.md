@@ -95,7 +95,7 @@ leesp> tail {7 8 9}
 {8 9}
 ```
 
-## user defined functions
+# User defined functions
 Combining the built in `def` function with the `\` lambda function allows a user to define their own functions.
 ```
 leesp> def {double} (\ {x} {* x 2})
