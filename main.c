@@ -3,6 +3,7 @@
 
 #include "mpc/mpc.h"
 
+#include "structs.h"
 #include "lval.h"
 #include "lenv.h"
 #include "builtin.h"

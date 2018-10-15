@@ -3,13 +3,6 @@ Create an environment to store relationships between symbols and values
 This is a naive approach of two equal length lists
 */
 
-// struct lenv {
-//   lenv* par;
-//   int count;
-//   char** syms;
-//   lval** vals;
-// };
-
 lenv* lenv_new(void) {
   lenv* e = malloc(sizeof(lenv));
   e->par = NULL;

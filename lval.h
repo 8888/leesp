@@ -8,18 +8,6 @@ requires useage of an environment
 #include <stdlib.h>
 
 /* forward declarations */
-struct lval;
-typedef struct lval lval;
-struct lenv;
-typedef struct lenv lenv;
-
-struct lenv {
-  lenv* par;
-  int count;
-  char** syms;
-  lval** vals;
-};
-
 lenv* lenv_new(void);
 void lenv_del(lenv* e);
 lenv* lenv_copy(lenv* e);
@@ -27,27 +15,6 @@ void lenv_put(lenv* e, lval* k, lval* v);
 lval* lenv_get(lenv* e, lval* k);
 
 lval* builtin_eval(lenv* e, lval* a);
-
-typedef lval*(*lbuiltin)(lenv*, lval*);
-
-struct lval {
-  int type;
-
-  /* basic */
-  long num;
-  char* err;
-  char* sym;
-
-  /* function */
-  lbuiltin builtin;
-  lenv* env;
-  lval* formals;
-  lval* body;
-
-  /* expression */
-  int count;
-  lval** cell;
-};
 
 /* enum of possible lval types */
 enum { LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_FUN, LVAL_SEXPR, LVAL_QEXPR };
