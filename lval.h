@@ -13,16 +13,28 @@ typedef struct lval lval;
 struct lenv;
 typedef struct lenv lenv;
 
+lenv* lenv_new(void);
+void lenv_del(lenv* e);
+
 lval* lenv_get(lenv* e, lval* k);
 
 typedef lval*(*lbuiltin)(lenv*, lval*);
 
 struct lval {
   int type;
+
+  /* basic */
   long num;
   char* err;
   char* sym;
-  lbuiltin fun;
+
+  /* function */
+  lbuiltin builtin;
+  lenv* env;
+  lval* formals;
+  lval* body;
+
+  /* expression */
   int count;
   lval** cell;
 };
@@ -78,7 +90,7 @@ lval* lval_sym(char* s) {
 lval* lval_fun(lbuiltin func) {
   lval* v = malloc(sizeof(lval));
   v->type = LVAL_FUN;
-  v->fun = func;
+  v->builtin = func;
   return v;
 }
 
@@ -100,12 +112,30 @@ lval* lval_qexpr(void) {
   return v;
 }
 
+lval* lval_lambda(lval* formals, lval* body) {
+  /* construct a pointer to a new lambda function lval */
+  lval* v = malloc(sizeof(lval));
+  v->type = LVAL_FUN;
+  v->builtin = NULL;
+  v->env = lenv_new();
+  v->formals = formals;
+  v->body = body;
+  return v;
+}
+
 void lval_del(lval* v) {
   switch (v->type) {
     case LVAL_NUM: break;
-    case LVAL_FUN: break;
     case LVAL_ERR: free(v->err); break;
     case LVAL_SYM: free(v->sym); break;
+
+    case LVAL_FUN:
+      if (!v->builtin) {
+        lenv_del(v->env);
+        lval_del(v->formals);
+        lval_del(v->body);
+      }
+      break;
 
     /* if Qexpr or Sexpr, delete all elements inside */
     case LVAL_QEXPR:
@@ -131,9 +161,19 @@ lval* lval_copy(lval* v) {
   x->type = v->type;
 
   switch (v->type) {
-    /* copy functions and numbers directly */
-    case LVAL_FUN: x->fun = v->fun; break;
+    /* copy numbers directly */
     case LVAL_NUM: x->num = v->num; break;
+
+    case LVAL_FUN:
+      if (v->builtin) {
+        x->builtin = v->builtin;
+      } else {
+        x->builtin = NULL;
+        x->env = lenv_copy(v->env);
+        x->formals = lval_copy(v->formals);
+        x->body = lval_copy(v->body);
+      }
+      break;
 
     /* copy strings */
     case LVAL_ERR:
@@ -209,7 +249,17 @@ void lval_print(lval* v) {
     case LVAL_NUM: printf("%li", v->num); break;
     case LVAL_ERR: printf("Error: %s", v->err); break;
     case LVAL_SYM: printf("%s", v->sym); break;
-    case LVAL_FUN: printf("<function>"); break;
+    case LVAL_FUN:
+      if (v->builtin) {
+        printf("<builtin>");
+      } else {
+        printf("(\\ ");
+        lval_print(v->formals);
+        putchar(' ');
+        lval_print(v->body);
+        putchar(')');
+      }
+      break;
     case LVAL_SEXPR: lval_expr_print(v, '(', ')'); break;
     case LVAL_QEXPR: lval_expr_print(v, '{', '}'); break;
   }
@@ -288,7 +338,7 @@ lval* lval_eval_sexpr(lenv* e, lval* v) {
   }
 
   /* If so call the function to get the result */
-  lval* result = f->fun(e, v);
+  lval* result = f->builtin(e, v);
   lval_del(f);
   return result;
 }
