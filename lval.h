@@ -13,11 +13,20 @@ typedef struct lval lval;
 struct lenv;
 typedef struct lenv lenv;
 
+struct lenv {
+  lenv* par;
+  int count;
+  char** syms;
+  lval** vals;
+};
+
 lenv* lenv_new(void);
 void lenv_del(lenv* e);
 lenv* lenv_copy(lenv* e);
-
+void lenv_put(lenv* e, lval* k, lval* v);
 lval* lenv_get(lenv* e, lval* k);
+
+lval* builtin_eval(lenv* e, lval* a);
 
 typedef lval*(*lbuiltin)(lenv*, lval*);
 
@@ -299,6 +308,42 @@ lval* lval_join(lval* x, lval* y) {
   return x;
 }
 
+lval* lval_call(lenv* e, lval* f, lval* a) {
+  if (f->builtin) { return f->builtin(e, a); }
+
+  int given = a->count;
+  int total = f->formals->count;
+
+  while (a->count) {
+    if (f->formals->count == 0) {
+      lval_del(a);
+      return lval_err(
+        "Function passed too many arguments. Got %i, expected %i",
+        given,
+        total
+      );
+    }
+
+    lval* sym = lval_pop(f->formals, 0);
+    lval* val = lval_pop(a, 0);
+    lenv_put(f->env, sym, val);
+    lval_del(sym);
+    lval_del(val);
+  }
+
+  // argument list is now bound, so this can be cleaned up
+  lval_del(a);
+
+  if (f->formals->count == 0) {
+    // if all formals have been evaluated, evaluate and return
+    f->env->par = e;
+    return builtin_eval(f->env, lval_add(lval_sexpr(), lval_copy(f->body)));
+  } else {
+    // otherwise return partially evaluated function
+    return lval_copy(f);
+  }
+}
+
 lval* lval_eval_sexpr(lenv* e, lval* v);
 
 lval* lval_eval(lenv* e, lval* v) {
@@ -333,13 +378,18 @@ lval* lval_eval_sexpr(lenv* e, lval* v) {
   /* ensure first element is a function after evaluation */
   lval* f = lval_pop(v, 0);
   if (f->type != LVAL_FUN) {
+    lval* err = lval_err(
+      "S-Expression starts with incorrect type. Got %s, expected %s.",
+      ltype_name(f->type),
+      ltype_name(LVAL_FUN)
+    );
     lval_del(v);
     lval_del(f);
-    return lval_err("first element is not a function!");
+    return err;
   }
 
   /* If so call the function to get the result */
-  lval* result = f->builtin(e, v);
+  lval* result = lval_call(e, f, v);
   lval_del(f);
   return result;
 }
