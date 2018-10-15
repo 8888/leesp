@@ -39,6 +39,29 @@ Definitions of leesp's built in functions
     index \
   );
 
+lval* builtin_lambda(lenv* e, lval* a) {
+  LASSERT_NUM("\\", a, 2);
+  LASSERT_TYPE("\\", a, 0, LVAL_QEXPR);
+  LASSERT_TYPE("\\", a, 1, LVAL_QEXPR);
+
+  for (int i = 0; i < a->cell[0]->count; i++) {
+    // first Q expression must only contain symbols
+    LASSERT(
+      a,
+      (a->cell[0]->cell[i]->type == LVAL_SYM),
+      "Cannot define non-symbol. Got %s, expected %s.",
+      ltype_name(a->cell[0]->cell[i]->type),
+      ltype_name(LVAL_SYM)
+    );
+  }
+
+  lval* formals = lval_pop(a, 0);
+  lval* body = lval_pop(a, 0);
+  lval_del(a);
+
+  return lval_lambda(formals, body);
+}
+
 lval* builtin_op(lenv* e, lval* a, char* op) {
   /* ensure all arguments are numbers */
   for (int i = 0; i < a->count; i++) {
