@@ -171,28 +171,49 @@ lval* builtin_join(lenv* e, lval* a) {
   return x;
 }
 
-lval* builtin_def(lenv* e, lval* a) {
-  LASSERT_TYPE("def", a, 0, LVAL_QEXPR);
+lval* builtin_var(lenv* e, lval* a, char* func) {
+  LASSERT_TYPE(func, a, 0, LVAL_QEXPR);
 
   /* first arg is a symbol list */
   lval* syms = a->cell[0];
   for (int i = 0; i < syms->count; i++) {
-    LASSERT_TYPE("def", a, i, LVAL_SYM);
+    LASSERT(
+      a,
+      (syms->cell[i]->type == LVAL_SYM),
+      "Function '%s' cannot define non-symbol. Got %s, expected %s.",
+      func,
+      ltype_name(syms->cell[i]->type),
+      ltype_name(LVAL_SYM)
+    );
   }
 
   LASSERT(
     a,
     syms->count == a->count - 1,
-    "Function 'def' cannot define incorrect number of values to symbols. Received %i symbols but %i values",
+    "Function '%s' cannot define incorrect number of values to symbols. Received %i symbols but %i values",
+    func,
     syms->count,
     a->count - 1
   );
 
   /* assign copies of values to symbols */
   for (int i = 0; i < syms->count; i++) {
-    lenv_put(e, syms->cell[i], a->cell[i + 1]);
+    /* if 'def' define in global, if 'put' define locally */
+    if (strcmp(func, "def") == 0) {
+      lenv_def(e, syms->cell[i], a->cell[i + 1]);
+    } else if (strcmp(func, "=") == 0) {
+      lenv_put(e, syms->cell[i], a->cell[i + 1]);
+    }
   }
 
   lval_del(a);
   return lval_sexpr();
+}
+
+lval* builtin_def(lenv* e, lval* a) {
+  return builtin_var(e, a, "def");
+}
+
+lval* builtin_put(lenv* e, lval* a) {
+  return builtin_var(e, a, "=");
 }
