@@ -94,3 +94,27 @@ Takes a Q-Expression and returns a new Q-Expression with the first element remov
 leesp> tail {7 8 9}
 {8 9}
 ```
+
+## user defined functions
+Combining the built in `def` function with the `\` lambda function allows a user to define their own functions.
+```
+leesp> def {double} (\ {x} {* x 2})
+()
+leesp> double 5
+10
+```
+Leesp functions support partial evaluation.
+```
+leesp> def {multiply} (\ {x y} {* x y})
+()
+leesp> multiply
+(\ {x y} {* x y})
+leesp> multiply 2 4
+8
+leesp> def {double} (multiply 2)
+()
+leesp> double
+(\ {y} {* x y})
+leesp> double 8
+16
+```
