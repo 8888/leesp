@@ -118,3 +118,12 @@ leesp> double
 leesp> double 8
 16
 ```
+Bootstrapping Leesp allows a cleaner function to define functions. In the example below we use `def` and `\` to define a function `func`. This function is used to define new functions!
+```
+leesp> def {func} (\ {args body} {def (head args) (\ (tail args) body)})
+()
+leesp> func {multiply x y} {* x y}
+()
+leesp> multiply 2 4
+8
+```
