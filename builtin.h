@@ -158,7 +158,7 @@ lval* builtin_eval(lenv* e, lval* a) {
 lval* builtin_join(lenv* e, lval* a) {
   /* takes one or more Q-Expressions and returns a Q-Expression of them joined together */
   for (int i = 0; i < a->count; i++) {
-    LASSERT_TYPE("join", a, 0, LVAL_QEXPR);
+    LASSERT_TYPE("join", a, i, LVAL_QEXPR);
   }
 
   lval* x = lval_pop(a, 0);
