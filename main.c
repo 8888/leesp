@@ -60,6 +60,12 @@ void lenv_add_builtins(lenv* e) {
   lenv_add_builtin(e, "*", builtin_mul);
   lenv_add_builtin(e, "/", builtin_div);
 
+  /* comparison functions */
+  lenv_add_builtin(e, ">", builtin_greater_than);
+  lenv_add_builtin(e, "<", builtin_less_than);
+  lenv_add_builtin(e, ">=", builtin_greater_than_equal);
+  lenv_add_builtin(e, "<=", builtin_less_than_equal);
+
   lenv_add_builtin(e, "\\", builtin_lambda);
 }
 

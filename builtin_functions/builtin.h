@@ -4,6 +4,7 @@ Definitions of leesp's built in functions
 
 #include "assertions.h"
 #include "arithmetic.h"
+#include "comparison.h"
 #include "list.h"
 
 lval* builtin_lambda(lenv* e, lval* a) {
