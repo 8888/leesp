@@ -96,7 +96,7 @@ int main(int argc, char** argv) {
     Number, Symbol, Sexpr, Qexpr, Expr, Leesp
   );
 
-  puts("Leesp version 0.12.1");
+  puts("Leesp version 0.13.0");
   puts("Press ctrl+c to exit\n");
 
   lenv* e = lenv_new();
