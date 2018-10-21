@@ -71,6 +71,7 @@ void lenv_add_builtins(lenv* e) {
   lenv_add_builtin(e, "!=", builtin_not_equal);
 
   lenv_add_builtin(e, "\\", builtin_lambda);
+  lenv_add_builtin(e, "if", builtin_if);
 }
 
 int main(int argc, char** argv) {
