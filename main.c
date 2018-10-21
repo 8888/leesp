@@ -6,7 +6,7 @@
 #include "structs.h"
 #include "lval.h"
 #include "lenv.h"
-#include "builtin.h"
+#include "builtin_functions/builtin.h"
 
 // compile if compiling on windows
 #ifdef _WIN32
