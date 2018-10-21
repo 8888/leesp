@@ -389,3 +389,28 @@ lval* lval_eval_sexpr(lenv* e, lval* v) {
   lval_del(f);
   return result;
 }
+
+int lvals_are_equal(lval* x, lval* y) {
+  if (x->type != y->type) { return 0; }
+
+  switch (x->type) {
+    case LVAL_NUM: return (x->num == y->num);
+    case LVAL_ERR: return (strcmp(x->err, y->err) == 0);
+    case LVAL_SYM: return (strcmp(x->sym, y->sym) == 0);
+    case LVAL_FUN:
+      if (x->builtin || y->builtin) {
+        return x->builtin == y->builtin;
+      } else {
+        return lvals_are_equal(x->formals, y->formals) && lvals_are_equal(x->body, y->body);
+      }
+    case LVAL_QEXPR:
+    case LVAL_SEXPR:
+      if (x->count != y->count) { return 0; }
+      for (int i = 0; i < x->count; i++) {
+        if (!lvals_are_equal(x->cell[i], y->cell[i])) { return 0; }
+      }
+      return 1;
+    break;
+  }
+  return 0;
+}

@@ -66,6 +66,10 @@ void lenv_add_builtins(lenv* e) {
   lenv_add_builtin(e, ">=", builtin_greater_than_equal);
   lenv_add_builtin(e, "<=", builtin_less_than_equal);
 
+  /* equality functions */
+  lenv_add_builtin(e, "==", builtin_equal_to);
+  lenv_add_builtin(e, "!=", builtin_not_equal);
+
   lenv_add_builtin(e, "\\", builtin_lambda);
 }
 
@@ -91,7 +95,7 @@ int main(int argc, char** argv) {
     Number, Symbol, Sexpr, Qexpr, Expr, Leesp
   );
 
-  puts("Leesp version 0.0.12");
+  puts("Leesp version 0.12.1");
   puts("Press ctrl+c to exit\n");
 
   lenv* e = lenv_new();
