@@ -142,3 +142,23 @@ leesp> func {multiply x y} {* x y}
 leesp> multiply 2 4
 8
 ```
+
+# Control flow
+Leesp supports `if` statements for basic control flow. Note, Leesp follows the C standard that all non-zero integers are truthy, so negative integers are still truthy. Only zero evaluates to false.
+```
+leesp> def {x y} 10 20
+()
+leesp> func {square_largest x y} {if (> x y) {* x x} {* y y}}
+()
+leesp> square_largest 10 20
+400
+```
+
+# Recursion
+`if` statements allow the use of recursive functions due to conditional checking of a base case. Below is an example of creating a function `len` to determine the length of a list:
+```
+leesp> func {len x} {if (== x {}) {0} {+ 1 (len (tail x))}}
+()
+leesp> len {0 1 2 3 4}
+5
+```
