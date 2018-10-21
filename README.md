@@ -30,6 +30,21 @@ leesp> + 4 (* 3 2) (- 9 (/ 12 2))
 13
 ```
 
+# Comparison operators
+Leesp supports the standard comparison operators of `>`, `<`, `>=`, `<=`, `==`, and `!=`. This will also be in polish notation, and comparison returns `1` when `true` and `0` when `false`.
+```
+leesp> > 1 2
+0
+leesp> < 1 2
+1
+leesp> == 1 2
+0
+leesp> != 1 2
+1
+leesp> <= 2 2
+1
+```
+
 # S-Expressions
 Lisp-like symbolic expressions. These are simply one or more expressions inside parentheses.
 ```
