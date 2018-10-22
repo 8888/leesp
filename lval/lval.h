@@ -99,34 +99,6 @@ void lval_print_ln(lval* v) {
   putchar('\n');
 }
 
-lval* lval_pop(lval* v, int i) {
-  lval* x = v->cell[i];
-
-  /* shift memory after item at i over the top */
-  memmove(&v->cell[i], &v->cell[i+1], sizeof(lval*) * (v->count - i -1));
-  v->count--;
-
-  /* reallocate the memory used */
-  v->cell = realloc(v->cell, sizeof(lval*) * v->count);
-
-  return x;
-}
-
-lval* lval_take(lval* v, int i) {
-  lval* x = lval_pop(v, i);
-  lval_del(v);
-  return x;
-}
-
-lval* lval_join(lval* x, lval* y) {
-  while (y->count) {
-    x = lval_add(x, lval_pop(y, 0));
-  }
-
-  lval_del(y);
-  return x;
-}
-
 lval* lval_call(lenv* e, lval* f, lval* a) {
   if (f->builtin) { return f->builtin(e, a); }
 
