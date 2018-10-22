@@ -1,8 +1,5 @@
 lenv* lenv_new(void);
 
-/* enum of possible lval types */
-enum { LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_FUN, LVAL_SEXPR, LVAL_QEXPR };
-
 lval* lval_num(long x) {
   /* construct a pointer to a new Number lval */
   lval* v = malloc(sizeof(lval));
