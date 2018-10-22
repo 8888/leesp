@@ -78,6 +78,7 @@ int main(int argc, char** argv) {
   /* create some parsers */
   mpc_parser_t* Number = mpc_new("number");
   mpc_parser_t* Symbol = mpc_new("symbol");
+  mpc_parser_t* String = mpc_new("string");
   mpc_parser_t* Sexpr = mpc_new("sexpr");
   mpc_parser_t* Qexpr = mpc_new("qexpr");
   mpc_parser_t* Expr = mpc_new("expr");
@@ -88,15 +89,16 @@ int main(int argc, char** argv) {
     " \
       number: /-?[0-9]+/ ; \
       symbol: /[a-zA-Z0-9_+\\-*\\/\\\\=<>!&]+/ ; \
+      string: /\"(\\\\.|[^\"])*\"/ ; \
       sexpr: '(' <expr>* ')' ; \
       qexpr: '{' <expr>* '}' ; \
-      expr: <number> | <symbol>  | <sexpr> | <qexpr> ; \
+      expr: <number> | <symbol> | <string> | <sexpr> | <qexpr> ; \
       leesp: /^/ <expr>* /$/ ; \
     ",
-    Number, Symbol, Sexpr, Qexpr, Expr, Leesp
+    Number, Symbol, String, Sexpr, Qexpr, Expr, Leesp
   );
 
-  puts("Leesp version 0.13.1");
+  puts("Leesp version 0.13.2");
   puts("Press ctrl+c to exit\n");
 
   lenv* e = lenv_new();
@@ -127,7 +129,7 @@ int main(int argc, char** argv) {
   lenv_del(e);
 
   /* undefine and delete our parsers */
-  mpc_cleanup(6, Number, Symbol, Sexpr, Qexpr, Expr, Leesp);
+  mpc_cleanup(7, Number, Symbol, String, Sexpr, Qexpr, Expr, Leesp);
 
   return 0;
 }

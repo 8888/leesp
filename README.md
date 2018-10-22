@@ -59,6 +59,13 @@ leesp> {+ 2 2}
 {+ 2 2}
 ```
 
+# Strings
+Strings are defined by using double quotes only.
+```
+leesp> "hello, world"
+"hello, world"
+```
+
 # Built in functions
 Leesp has multiple built in functions that are always available, listed below in alphabetical order.
 
