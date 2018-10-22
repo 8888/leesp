@@ -9,6 +9,7 @@ requires useage of an environment
 
 #include "constructors.h"
 #include "edit.h"
+#include "print.h"
 
 /* forward declarations */
 void lenv_put(lenv* e, lval* k, lval* v);
@@ -57,46 +58,6 @@ lval* lval_read(mpc_ast_t* t) {
   }
 
   return x;
-}
-
-void lval_print(lval* v); // forward declaration to prevent circular dependency
-
-void lval_expr_print(lval* v, char open, char close) {
-  putchar(open);
-  for (int i = 0; i < v->count; i++) {
-    lval_print(v->cell[i]);
-    /* dont print trailing whitespace if last char */
-    if (i != (v->count - 1)) {
-      putchar(' ');
-    }
-  }
-  putchar(close);
-}
-
-void lval_print(lval* v) {
-  switch (v->type) {
-    case LVAL_NUM: printf("%li", v->num); break;
-    case LVAL_ERR: printf("Error: %s", v->err); break;
-    case LVAL_SYM: printf("%s", v->sym); break;
-    case LVAL_FUN:
-      if (v->builtin) {
-        printf("<builtin>");
-      } else {
-        printf("(\\ ");
-        lval_print(v->formals);
-        putchar(' ');
-        lval_print(v->body);
-        putchar(')');
-      }
-      break;
-    case LVAL_SEXPR: lval_expr_print(v, '(', ')'); break;
-    case LVAL_QEXPR: lval_expr_print(v, '{', '}'); break;
-  }
-}
-
-void lval_print_ln(lval* v) {
-  lval_print(v);
-  putchar('\n');
 }
 
 lval* lval_call(lenv* e, lval* f, lval* a) {
