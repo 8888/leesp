@@ -5,7 +5,7 @@
 
 #include "shared/structs.h"
 #include "lval/lval.h"
-#include "lenv.h"
+#include "lenv/lenv.h"
 #include "builtin_functions/builtin.h"
 
 // compile if compiling on windows
