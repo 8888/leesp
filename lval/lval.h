@@ -50,6 +50,7 @@ int lvals_are_equal(lval* x, lval* y) {
     case LVAL_NUM: return (x->num == y->num);
     case LVAL_ERR: return (strcmp(x->err, y->err) == 0);
     case LVAL_SYM: return (strcmp(x->sym, y->sym) == 0);
+    case LVAL_STR: return (strcmp(x->str, y->str) == 0);
     case LVAL_FUN:
       if (x->builtin || y->builtin) {
         return x->builtin == y->builtin;

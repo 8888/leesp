@@ -33,7 +33,17 @@ lval* lval_sym(char* s) {
   return v;
 }
 
+lval* lval_str(char* s) {
+  /* constuct a pointer to a new String lval */
+  lval* v = malloc(sizeof(lval));
+  v->type = LVAL_STR;
+  v->str = malloc(strlen(s) + 1);
+  strcpy(v->str, s);
+  return v;
+}
+
 lval* lval_fun(lbuiltin func) {
+  /* constuct a pointer to a new Function lval */
   lval* v = malloc(sizeof(lval));
   v->type = LVAL_FUN;
   v->builtin = func;

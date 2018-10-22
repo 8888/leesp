@@ -6,6 +6,7 @@ void lval_del(lval* v) {
     case LVAL_NUM: break;
     case LVAL_ERR: free(v->err); break;
     case LVAL_SYM: free(v->sym); break;
+    case LVAL_STR: free(v->str); break;
 
     case LVAL_FUN:
       if (!v->builtin) {
@@ -62,6 +63,11 @@ lval* lval_copy(lval* v) {
     case LVAL_SYM:
       x->sym = malloc(strlen(v->sym) + 1);
       strcpy(x->sym, v->sym);
+      break;
+    
+    case LVAL_STR:
+      x->str = malloc(strlen(v->str) + 1);
+      strcpy(x->str, v->str);
       break;
 
     /* copy lists */
