@@ -4,7 +4,7 @@ A Lisp-like implementation written in C.
 # To Compile
 On Linux and Mac
 ```
-cc -std=c99 -Wall main.c mpc/mpc.c -ledit -lm -o leesp
+cc -std=c99 -Wall main.c include/mpc/mpc.c -ledit -lm -o leesp
 ```
 On Windows
 ```

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "mpc/mpc.h"
+#include "include/mpc/mpc.h"
 
 #include "structs.h"
 #include "lval.h"
