@@ -169,3 +169,6 @@ leesp> func {len x} {if (== x {}) {0} {+ 1 (len (tail x))}}
 leesp> len {0 1 2 3 4}
 5
 ```
+
+# Comments
+As in Lisp, comments are defined by using `;` and run to the end of the line.
