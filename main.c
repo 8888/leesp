@@ -72,6 +72,11 @@ void lenv_add_builtins(lenv* e) {
 
   lenv_add_builtin(e, "\\", builtin_lambda);
   lenv_add_builtin(e, "if", builtin_if);
+
+  /* string functions */
+  lenv_add_builtin(e, "load", builtin_load);
+  lenv_add_builtin(e, "error", builtin_error);
+  lenv_add_builtin(e, "print", builtin_print);
 }
 
 int main(int argc, char** argv) {
@@ -100,32 +105,41 @@ int main(int argc, char** argv) {
     Number, Symbol, String, Comment, Sexpr, Qexpr, Expr, Leesp
   );
 
-  puts("Leesp version 0.13.3");
-  puts("Press ctrl+c to exit\n");
-
   lenv* e = lenv_new();
   lenv_add_builtins(e);
+  if (argc == 1) {
+    puts("Leesp version 0.14.0");
+    puts("Press ctrl+c to exit\n");
 
-  while (1) {
-    char* input = readline("leesp> ");
-    add_history(input);
+    while (1) {
+      char* input = readline("leesp> ");
+      add_history(input);
 
-    /* attempt to parse the user input */
-    mpc_result_t r;
-    // mpc_parse returns 1 on success and 0 on failure
-    if (mpc_parse("<stdin>", input, Leesp, &r)) {
-      lval* x = lval_eval(e, lval_read(r.output));
-      lval_print_ln(x);
-      lval_del(x);
+      /* attempt to parse the user input */
+      mpc_result_t r;
+      // mpc_parse returns 1 on success and 0 on failure
+      if (mpc_parse("<stdin>", input, Leesp, &r)) {
+        lval* x = lval_eval(e, lval_read(r.output));
+        lval_print_ln(x);
+        lval_del(x);
 
-      mpc_ast_delete(r.output);
-    } else {
-      /* otherwise print the error */
-      mpc_err_print(r.error);
-      mpc_err_delete(r.error);
+        mpc_ast_delete(r.output);
+      } else {
+        /* otherwise print the error */
+        mpc_err_print(r.error);
+        mpc_err_delete(r.error);
+      }
+
+      free(input);
     }
-
-    free(input);
+  } else {
+    for (int i = 1; i < argc; i++) {
+      // i = 1 because first argument is always the program
+      lval* args = lval_add(lval_sexpr(), lval_str(argv[i]));
+      lval* result = builtin_load(e, args);
+      if (result->type == LVAL_ERR) { lval_print_ln(result); }
+      lval_del(result);
+    }
   }
 
   lenv_del(e);
