@@ -7,6 +7,8 @@ Definitions of leesp's built in functions
 #include "comparison.h"
 #include "list.h"
 
+mpc_parser_t* Leesp;
+
 lval* builtin_lambda(lenv* e, lval* a) {
   LASSERT_NUM("\\", a, 2);
   LASSERT_TYPE("\\", a, 0, LVAL_QEXPR);
@@ -95,4 +97,37 @@ lval* builtin_if(lenv* e, lval* a) {
 
   lval_del(a);
   return x;
+}
+
+lval* builtin_load(lenv* e, lval* a) {
+  LASSERT_NUM("load", a, 1);
+  LASSERT_TYPE("load", a, 0, LVAL_STR);
+
+  /* parse file given by string name */
+  mpc_result_t r;
+  if (mpc_parse_contents(a->cell[0]->str, Leesp, &r)) {
+    /* read contents */
+    lval* expr = lval_read(r.output);
+    mpc_ast_delete(r.output);
+
+    /* evaluate each expression */
+    while (expr->count) {
+      lval* x = lval_eval(e, lval_pop(expr, 0));
+      if (x->type == LVAL_ERR) { lval_print_ln(x); }
+      lval_del(x);
+    }
+
+    lval_del(expr);
+    lval_del(a);
+    return lval_sexpr();
+  } else {
+    /* get parse error as string */
+    char* err_msg = mpc_err_string(r.error);
+    mpc_err_delete(r.error);
+
+    lval* err = lval_err("Could not load library %s", err_msg);
+    free(err_msg);
+    lval_del(a);
+    return err;
+  }
 }
