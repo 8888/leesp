@@ -119,7 +119,7 @@ int main(int argc, char** argv) {
   lenv_add_builtins(e);
 
   if (argc == 1) {
-    puts("Leesp version 0.14.0");
+    puts("Leesp version 0.15.0");
     puts("Press ctrl+c to exit\n");
 
     while (1) {
