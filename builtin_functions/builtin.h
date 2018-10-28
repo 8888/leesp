@@ -7,8 +7,6 @@ Definitions of leesp's built in functions
 #include "comparison.h"
 #include "list.h"
 
-mpc_parser_t* Leesp;
-
 lval* builtin_lambda(lenv* e, lval* a) {
   LASSERT_NUM("\\", a, 2);
   LASSERT_TYPE("\\", a, 0, LVAL_QEXPR);

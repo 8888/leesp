@@ -3,6 +3,16 @@
 
 #include "include/mpc/mpc.h"
 
+/* parser foward declarations */
+mpc_parser_t* Number;
+mpc_parser_t* Symbol;
+mpc_parser_t* String;
+mpc_parser_t* Comment;
+mpc_parser_t* Sexpr;
+mpc_parser_t* Qexpr;
+mpc_parser_t* Expr;
+mpc_parser_t* Leesp;
+
 #include "shared/structs.h"
 #include "lval/lval.h"
 #include "lenv/lenv.h"
@@ -81,14 +91,14 @@ void lenv_add_builtins(lenv* e) {
 
 int main(int argc, char** argv) {
   /* create some parsers */
-  mpc_parser_t* Number = mpc_new("number");
-  mpc_parser_t* Symbol = mpc_new("symbol");
-  mpc_parser_t* String = mpc_new("string");
-  mpc_parser_t* Comment = mpc_new("comment");
-  mpc_parser_t* Sexpr = mpc_new("sexpr");
-  mpc_parser_t* Qexpr = mpc_new("qexpr");
-  mpc_parser_t* Expr = mpc_new("expr");
-  mpc_parser_t* Leesp = mpc_new("leesp");
+  Number = mpc_new("number");
+  Symbol = mpc_new("symbol");
+  String = mpc_new("string");
+  Comment = mpc_new("comment");
+  Sexpr = mpc_new("sexpr");
+  Qexpr = mpc_new("qexpr");
+  Expr = mpc_new("expr");
+  Leesp = mpc_new("leesp");
 
   /* define them with the following language */
   mpca_lang(MPCA_LANG_DEFAULT,
@@ -107,6 +117,7 @@ int main(int argc, char** argv) {
 
   lenv* e = lenv_new();
   lenv_add_builtins(e);
+
   if (argc == 1) {
     puts("Leesp version 0.14.0");
     puts("Press ctrl+c to exit\n");
