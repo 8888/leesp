@@ -89,6 +89,13 @@ void lenv_add_builtins(lenv* e) {
   lenv_add_builtin(e, "print", builtin_print);
 }
 
+void load_standard_library(lenv* e) {
+  lval* args = lval_add(lval_sexpr(), lval_str("./library/standard.leesp"));
+  lval* result = builtin_load(e, args);
+  if (result->type == LVAL_ERR) { lval_print_ln(result); }
+  lval_del(result);
+}
+
 int main(int argc, char** argv) {
   /* create some parsers */
   Number = mpc_new("number");
@@ -117,6 +124,7 @@ int main(int argc, char** argv) {
 
   lenv* e = lenv_new();
   lenv_add_builtins(e);
+  load_standard_library(e);
 
   if (argc == 1) {
     puts("Leesp version 0.15.0");

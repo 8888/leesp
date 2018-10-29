@@ -1,5 +1,5 @@
 # Leesp  
-A Lisp-like implementation written in C. 
+A Lisp-like implementation written in C with some high-level portions bootstrapped in Leesp.
 
 # To Compile
 On Linux and Mac
@@ -118,36 +118,19 @@ leesp> tail {7 8 9}
 ```
 
 # User defined functions
-Combining the built in `def` function with the `\` lambda function allows a user to define their own functions.
+The `func` keyword is used to define new functions. The first argument is a Q-Expression containing a name followed by any number of function arguments. The second argument is the function defintion.
 ```
-leesp> def {double} (\ {x} {* x 2})
-()
-leesp> double 5
-10
-```
-Leesp functions support partial evaluation.
-```
-leesp> def {multiply} (\ {x y} {* x y})
-()
-leesp> multiply
-(\ {x y} {* x y})
-leesp> multiply 2 4
-8
-leesp> def {double} (multiply 2)
-()
-leesp> double
-(\ {y} {* x y})
-leesp> double 8
-16
-```
-Bootstrapping Leesp allows a cleaner function to define functions. In the example below we use `def` and `\` to define a function `func`. This function is used to define new functions!
-```
-leesp> def {func} (\ {args body} {def (head args) (\ (tail args) body)})
-()
 leesp> func {multiply x y} {* x y}
 ()
 leesp> multiply 2 4
 8
+```
+Leesp functions support partial evaluation by providing less than all of the arguments.
+```
+leesp> def {double} (multiply 2)
+()
+leesp> double 8
+16
 ```
 
 # Control flow
