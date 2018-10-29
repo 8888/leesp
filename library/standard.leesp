@@ -7,3 +7,15 @@
 (def {func} (\ {f b} {
   def (head f) (\ (tail f) b)
 }))
+
+; unpack list for function
+(func {unpack f x} {
+  eval (join (list f) x)
+})
+
+; pack list for function
+(func {pack f & xs} {f xs})
+
+; curried and uncurried alias calling
+(def {curry} unpack)
+(def {uncurry} pack)
