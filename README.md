@@ -117,6 +117,20 @@ leesp> tail {7 8 9}
 {8 9}
 ```
 
+## unpack (also aliased as curry)
+Takes a function and a Q-Expression of arguments, and calls the provided function with those arguments.
+```
+leesp> unpack + {1 2 3}
+6
+```
+
+## pack (also aliased as uncurry)
+Takes a function and a variable list of arguments, and calls the provided function with a Q-Expression of those arguments.
+```
+leesp> pack head 1 2 3
+1
+```
+
 # User defined functions
 The `func` keyword is used to define new functions. The first argument is a Q-Expression containing a name followed by any number of function arguments. The second argument is the function defintion.
 ```
