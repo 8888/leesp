@@ -45,6 +45,29 @@ leesp> <= 2 2
 1
 ```
 
+# Logical operators
+`not`
+```
+leesp> not true
+0
+leesp> not false
+1
+```
+`or`
+```
+leesp> or true false
+1
+leesp> or false false
+0
+```
+`and`
+```
+leesp> and true false
+0
+leesp> and true true
+1
+```
+
 # S-Expressions
 Lisp-like symbolic expressions. These are simply one or more expressions inside parentheses.
 ```

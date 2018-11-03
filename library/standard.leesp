@@ -19,3 +19,8 @@
 ; curried and uncurried alias calling
 (def {curry} unpack)
 (def {uncurry} pack)
+
+; logical operators
+(func {not x} {- 1 x})
+(func {or x y} {+ x y})
+(func {and x y} {* x y})
