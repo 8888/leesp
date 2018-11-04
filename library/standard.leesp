@@ -24,3 +24,42 @@
 (func {not x} {- 1 x})
 (func {or x y} {+ x y})
 (func {and x y} {* x y})
+
+; list length
+(func {len x} {
+  if (== x nil)
+    {0}
+    {+ 1 (len (tail x))}
+})
+
+; fst
+(func {fst x} {
+  eval (head x)
+})
+
+; map
+(func {map f x} {
+  if (== x nil)
+    {nil}
+    {join (list (f (fst x))) (map f (tail x))}
+})
+
+; filter
+(func {filter f x} {
+  if (== x nil)
+    {nil}
+    {join (if (f (fst x)) {head x} {nil}) (filter f (tail x))}
+})
+
+; fold left
+(func {foldl f z x} {
+  if (== x nil)
+   {z}
+   {foldl f (f z (fst x)) (tail x)}
+})
+
+; sum using fold left
+(func {sum x} {foldl + 0 x})
+
+; product using fold left
+(func {product x} {foldl * 1 x})

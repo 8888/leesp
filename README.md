@@ -140,6 +140,50 @@ leesp> tail {7 8 9}
 {8 9}
 ```
 
+## len
+Returns the length of a Q-Expression.
+```
+leesp> len {1 2 3 4 5}
+5
+```
+
+## fst
+Returns the first element from a Q-Expression
+```
+leesp> fst {1 2}
+1
+```
+
+## map
+Applies to a function to each element in a Q-Expression, returning a new Q-Expression with the results
+```
+; multiply all values by 2
+leesp> map (\ {x} {* x 2}) {1 2 3 4 5}
+{2 4 6 8 10}
+```
+
+## filter
+Takes a Q-Expression and a functional condition, and returns a new Q-Expression containing only the elements that match this condition
+```
+; return all integers greater than 0
+leesp> filter (\ {x} {> x 0}) {5 8 -3 4 -12 0}
+{5 8 4}
+```
+
+## sum
+Returns the sum of all elements in a Q-Expression
+```
+leesp> sum {2 4 8}
+14
+```
+
+## product
+Returns the product of all elements in a Q-Expression
+```
+leesp> product {2 4 8}
+64
+```
+
 ## unpack (also aliased as curry)
 Takes a function and a Q-Expression of arguments, and calls the provided function with those arguments.
 ```
