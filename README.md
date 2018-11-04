@@ -2,13 +2,13 @@
 A Lisp-like implementation written in C with some high-level portions bootstrapped in Leesp.
 
 # To Compile
-On Linux and Mac
+On Linux and Mac, simply use `make` to execute the recipe in the makefile, or
 ```
-cc -std=c99 -Wall main.c include/mpc/mpc.c -ledit -lm -o leesp
+cc -std=c99 -Wall include/mpc/mpc.c main.c -ledit -lm -o leesp
 ```
 On Windows
 ```
-cc -std=c99 -Wall main.c mpc/mpc.c -o leesp
+cc -std=c99 -Wall include/mpc/mpc.c main.c -o leesp
 ```
 
 # Arithmetic operators

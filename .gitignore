@@ -1,3 +1,5 @@
 # compiled output
 *.out
+*.o
+*.obj
 leesp
