@@ -127,7 +127,7 @@ int main(int argc, char** argv) {
   load_standard_library(e);
 
   if (argc == 1) {
-    puts("Leesp version 0.15.0");
+    puts("Leesp version 1.0.0");
     puts("Press ctrl+c to exit\n");
 
     while (1) {

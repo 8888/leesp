@@ -37,6 +37,11 @@
   eval (head x)
 })
 
+; snd
+(func {snd x} {
+  eval (head (tail x))
+})
+
 ; map
 (func {map f x} {
   if (== x nil)
@@ -63,3 +68,11 @@
 
 ; product using fold left
 (func {product x} {foldl * 1 x})
+
+; select
+(func {select & cs} {
+  if (== cs nil)
+    {error "No Selection Found"}
+    {if (fst (fst cs)) {snd (fst cs)} {unpack select (tail cs)}}
+})
+(def {otherwise} true)

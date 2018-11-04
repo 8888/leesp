@@ -225,6 +225,26 @@ leesp> square_largest 10 20
 400
 ```
 
+`select` statements are also supported.
+```
+(func {month_day_suffix i} {
+  select
+    {(== i 1)  "st"}
+    {(== i 2)  "nd"}
+    {(== i 3)  "rd"}
+    {otherwise "th"}
+})
+
+month_day_suffix 1
+; "st"
+month_day_suffix 2
+; "nd"
+month_day_suffix 3
+; "rd"
+month_day_suffix 8
+; "th"
+```
+
 # Recursion
 `if` statements allow the use of recursive functions due to conditional checking of a base case. Below is an example of creating a function `len` to determine the length of a list:
 ```
